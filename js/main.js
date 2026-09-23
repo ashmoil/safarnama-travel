@@ -72,6 +72,8 @@
             mask.className = 'split-line';
             mask.style.display = 'inline-block';
             mask.style.verticalAlign = 'top';
+            mask.style.paddingBottom = '0.16em';
+            mask.style.marginBottom = '-0.16em';
             var w = document.createElement('span');
             w.className = 'split-word';
             w.textContent = p;
@@ -393,6 +395,7 @@
     if (pre) pre.classList.add('is-done');
     $$('[data-count]').forEach(function (el) { el.textContent = el.dataset.count; });
     $$('.big-text .w').forEach(function (w) { w.style.opacity = 1; });
+    $$('.page-hero .breadcrumbs, .page-hero p').forEach(function (el) { el.style.opacity = 1; });
     return;
   }
 
@@ -501,7 +504,15 @@
   var pageTitle = $('[data-page-title]');
   if (pageTitle) {
     var pw = splitWords(pageTitle);
-    gsap.fromTo(pw, { yPercent: 115 }, { yPercent: 0, duration: 1.2, stagger: 0.07, ease: 'power4.out', delay: 0.35 });
+    var ph = $('.page-hero');
+    var ptl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    if (ph) {
+      var phImg = $('.hero__media img', ph);
+      ptl.fromTo(ph, { clipPath: 'inset(12% 10% 12% 10% round 48px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 32px 32px)', duration: 1.5, ease: 'expo.inOut', clearProps: 'clipPath' }, 0);
+      if (phImg) ptl.fromTo(phImg, { scale: 1.6, rotate: 2 }, { scale: 1, rotate: 0, duration: 2.2, ease: 'expo.out' }, 0);
+      ptl.fromTo($$('.breadcrumbs, p', ph), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, stagger: 0.12 }, 0.9);
+    }
+    ptl.fromTo(pw, { yPercent: 120, rotate: 5 }, { yPercent: 0, rotate: 0, duration: 1.3, stagger: 0.07 }, ph ? 0.55 : 0.2);
   }
 
   /* ---------- Hero parallax on scroll ---------- */
@@ -615,29 +626,36 @@
     gsap.from(avatars, { scale: 0, duration: 0.9, stagger: 0.08, ease: 'back.out(2)', scrollTrigger: { trigger: '.orbit', start: 'top 80%' } });
   }
 
-  /* ---------- HERO ZOOM: inset card expands, zooms, crossfades to a 2nd scene ---------- */
+  /* ---------- HERO: fly through the fog into the rainforest (Movade style) ---------- */
   mm.add('(min-width: 761px)', function () {
     var hero = $('.hero--zoom');
     if (!hero) return;
     var img1 = $('.hero__media:not(.hero__media--2) img', hero);
     var m2 = $('.hero__media--2', hero);
     var img2 = m2 ? $('img', m2) : null;
-    var cap = $('.hero__caption2', hero);
-    var content = $('.hero__content', hero);
+    var fog = $$('.hero__fog i', hero);
+    var title = $('.hero__title', hero);
+    var extras = [$('.pill', hero), $('.hero__sub', hero)];
     var search = $('.search-card', hero);
     var bottom = $('.hero__bottom', hero);
-    var IR = { immediateRender: false };
+    var IR = function (o) { o.immediateRender = false; return o; };
     gsap.set(hero, { clipPath: 'inset(14px 14px 14px 14px round 30px)' });
-    var tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: '+=160%', pin: true, scrub: 1, anticipatePin: 1, refreshPriority: 3 } });
-    tl.fromTo(hero, { clipPath: 'inset(14px 14px 14px 14px round 30px)' }, Object.assign({ clipPath: 'inset(0px 0px 0px 0px round 0px)', ease: 'none', duration: 0.25 }, IR), 0)
-      .fromTo(content, { yPercent: 0, opacity: 1 }, Object.assign({ yPercent: -35, opacity: 0, ease: 'power1.in', duration: 0.3 }, IR), 0)
-      .fromTo([search, bottom], { y: 0, opacity: 1 }, Object.assign({ y: 140, opacity: 0, ease: 'power1.in', duration: 0.28 }, IR), 0)
-      .fromTo(img1, { scale: 1 }, Object.assign({ scale: 1.6, ease: 'none', duration: 0.6 }, IR), 0)
-      .fromTo(m2, { opacity: 0 }, Object.assign({ opacity: 1, ease: 'none', duration: 0.25 }, IR), 0.32)
-      .fromTo(img2, { scale: 1.45 }, Object.assign({ scale: 1, ease: 'none', duration: 0.68 }, IR), 0.32)
-      .fromTo(cap, { opacity: 0, y: 80, filter: 'blur(12px)' }, Object.assign({ opacity: 1, y: 0, filter: 'blur(0px)', ease: 'power2.out', duration: 0.3 }, IR), 0.55)
-      .to({}, { duration: 0.12 });
-    return function () { gsap.set([hero, content, search, bottom, img1, m2, img2, cap], { clearProps: 'all' }); };
+    var tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: '+=170%', pin: true, scrub: 1.2, anticipatePin: 1, refreshPriority: 3 } });
+    tl.fromTo([search, bottom], { y: 0, opacity: 1 }, IR({ y: 160, opacity: 0, ease: 'power2.in', duration: 0.25 }), 0)
+      .fromTo(extras, { opacity: 1, y: 0 }, IR({ opacity: 0, y: -30, ease: 'none', duration: 0.2 }), 0.15)
+      // the misty mountain photo rushes towards the camera and dissolves
+      .fromTo(img1, { scale: 1, opacity: 1 }, IR({ scale: 2.6, ease: 'power1.in', duration: 0.6 }), 0)
+      .to(img1, { opacity: 0, ease: 'none', duration: 0.3 }, 0.3)
+      // clouds thicken, then part as we fly through them
+      .fromTo(fog, { opacity: 0, scale: 1 }, IR({ opacity: 0.9, scale: 1.3, ease: 'none', duration: 0.25, stagger: 0.05 }), 0.08)
+      .to(fog, { opacity: 0, scale: 3.2, ease: 'power1.in', duration: 0.35, stagger: 0.05 }, 0.38)
+      // the rainforest appears behind the fog and keeps pushing in
+      .fromTo(m2, { opacity: 0 }, IR({ opacity: 1, ease: 'none', duration: 0.3 }), 0.2)
+      .fromTo(img2, { scale: 1.6 }, IR({ scale: 1, ease: 'power1.out', duration: 0.8 }), 0.2)
+      // heading holds, then drifts back and fades as the next section arrives
+      .fromTo(title, { scale: 1, opacity: 1 }, IR({ scale: 0.92, opacity: 0, ease: 'power1.in', duration: 0.3 }), 0.7)
+      .to({}, { duration: 0.05 });
+    return function () { gsap.set([hero, img1, m2, img2, title, search, bottom].concat(fog, extras), { clearProps: 'all' }); };
   });
 
   /* ---------- Blur-in for the destination cards ---------- */
