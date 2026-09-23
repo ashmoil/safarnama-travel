@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /thank-you.html
+
+Sitemap: https://ashmoil.github.io/safarnama-travel/sitemap.xml
