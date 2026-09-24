@@ -1429,7 +1429,7 @@ p { margin: 0; }
 }
 .hero__caption2-title em { color: var(--lime); }
 .hero__caption2-sub { margin-top: 18px; color: rgba(255,255,255,0.88); font-size: clamp(15px, 1.3vw, 19px); }
-@media (max-width: 760px) { .hero__media--2, .hero__caption2 { display: none; } }
+
 
 /* Blur reveal */
 .js [data-reveal="blur"] { opacity: 0; filter: blur(18px); transform: translateY(40px) scale(1.04); }
@@ -1584,7 +1584,7 @@ p { margin: 0; }
 .hero__fog i:nth-child(1) { background: radial-gradient(ellipse 45% 40% at 28% 45%, rgba(236,241,236,0.95), rgba(236,241,236,0) 70%); }
 .hero__fog i:nth-child(2) { background: radial-gradient(ellipse 50% 38% at 72% 58%, rgba(230,236,231,0.92), rgba(230,236,231,0) 70%); }
 .hero__fog i:nth-child(3) { background: radial-gradient(ellipse 60% 45% at 50% 30%, rgba(244,246,242,0.9), rgba(244,246,242,0) 72%); }
-@media (max-width: 760px) { .hero__fog { display: none; } }
+
 
 /* v4 — smooth page-to-page transitions (native browser View Transitions: can never block a click) */
 @view-transition { navigation: auto; }
@@ -1596,3 +1596,27 @@ p { margin: 0; }
 
 /* Inner page hero entrance */
 .js .page-hero .breadcrumbs, .js .page-hero p { opacity: 0; }
+
+/* v5 — compact one-screen hero on phones so the fog animation plays pinned, like on laptop */
+@media (max-width: 760px) {
+  .hero--zoom { min-height: 100svh; height: 100svh; }
+  .hero--zoom .hero__content { padding-top: 104px; padding-bottom: 18px; }
+  .hero--zoom .hero__title { font-size: clamp(38px, 11vw, 52px); margin-top: 18px; }
+  .hero--zoom .hero__sub { font-size: 14px; margin-top: 14px; }
+  .hero--zoom .search-card { padding: 14px; }
+  .hero--zoom .search-card__top { margin-bottom: 12px; }
+  .hero--zoom .search-card__top h2 { font-size: 16px; }
+  .hero--zoom .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -14px; padding: 0 14px; width: calc(100% + 28px); }
+  .hero--zoom .tabs::-webkit-scrollbar { display: none; }
+  .hero--zoom .tab { white-space: nowrap; padding: 8px 14px; }
+  .hero--zoom .search-form { grid-template-columns: 1fr auto; gap: 8px; }
+  .hero--zoom .search-form .field:first-of-type { grid-column: auto; }
+  .hero--zoom .search-form .field:not(:first-of-type) { display: none; }
+  .hero--zoom .search-form .field label { display: none; }
+  .hero--zoom .search-form .btn { grid-column: auto; height: 48px; padding: 0 18px; }
+  .hero--zoom .search-form .btn .arrow { display: none; }
+  .hero--zoom .hero__bottom { padding: 14px 0 18px; }
+}
+/* keep phones from widening the page (fixes the cut-off menu button) */
+html { overflow-x: hidden; }
+@supports (overflow: clip) { html, body { overflow-x: clip; } }

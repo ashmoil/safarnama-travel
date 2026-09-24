@@ -407,6 +407,7 @@
   }
 
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   var mm = gsap.matchMedia();
 
   /* ---------- Smooth scroll ---------- */
@@ -524,7 +525,7 @@
 
   /* ---------- Hero parallax on scroll ---------- */
   $$('.hero, .page-hero').forEach(function (h) {
-    if (h.classList.contains('hero--zoom') && window.innerWidth > 760) return;
+    if (h.classList.contains('hero--zoom')) return;
     var img = $('.hero__media img', h);
     var content = $('.hero__content, .page-hero .container', h);
     if (img) gsap.to(img, { yPercent: 12, ease: 'none', scrollTrigger: { trigger: h, start: 'top top', end: 'bottom top', scrub: true } });
@@ -633,8 +634,9 @@
     gsap.from(avatars, { scale: 0, duration: 0.9, stagger: 0.08, ease: 'back.out(2)', scrollTrigger: { trigger: '.orbit', start: 'top 80%' } });
   }
 
-  /* ---------- HERO: fly through the fog into the rainforest (Movade style) ---------- */
-  mm.add('(min-width: 761px)', function () {
+  /* ---------- HERO: fly through the fog into the rainforest (Movade style) — laptop AND phone ---------- */
+  mm.add('(min-width: 0px)', function () {
+    var phone = window.innerWidth <= 760;
     var hero = $('.hero--zoom');
     if (!hero) return;
     var img1 = $('.hero__media:not(.hero__media--2) img', hero);
@@ -646,8 +648,9 @@
     var search = $('.search-card', hero);
     var bottom = $('.hero__bottom', hero);
     var IR = function (o) { o.immediateRender = false; return o; };
-    gsap.set(hero, { clipPath: 'inset(14px 14px 14px 14px round 30px)' });
-    var tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: '+=170%', pin: true, scrub: 1.2, anticipatePin: 1, refreshPriority: 3 } });
+    var inset = phone ? 'inset(8px 8px 8px 8px round 22px)' : 'inset(14px 14px 14px 14px round 30px)';
+    gsap.set(hero, { clipPath: inset });
+    var tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: phone ? '+=130%' : '+=170%', pin: true, scrub: 1.2, anticipatePin: 1, refreshPriority: 3 } });
     tl.fromTo([search, bottom], { y: 0, opacity: 1 }, IR({ y: 160, opacity: 0, ease: 'power2.in', duration: 0.25 }), 0)
       .fromTo(extras, { opacity: 1, y: 0 }, IR({ opacity: 0, y: -30, ease: 'none', duration: 0.2 }), 0.15)
       // the misty mountain photo rushes towards the camera and dissolves
