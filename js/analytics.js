@@ -9,6 +9,10 @@
 
 var SAFARNAMA_GA_ID = 'G-L7059TEKQL';
 
+/* Backend (Google Apps Script Web App URL, ends with /exec).
+   Form enquiries + newsletter signups are saved to Google Sheets. */
+var SAFARNAMA_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbza1NomLMFJIj1nAGCqpUVEoEQnmGyhXqJtWz8017goOux6aD9XIaj7V86JO8ZGKLTh/exec';
+
 (function () {
   var id = SAFARNAMA_GA_ID;
   var ready = /^G-[A-Z0-9]{6,}$/.test(id) && id !== 'G-XXXXXXXXXX';
@@ -50,5 +54,21 @@ var SAFARNAMA_GA_ID = 'G-L7059TEKQL';
       if (window.console) console.info('[Safarnama] event:', name, params);
       finish();
     }
+  };
+
+  /** Save a form submission to the Safarnama database (Google Sheets). Always resolves. */
+  window.sendToBackend = function (data) {
+    var url = SAFARNAMA_BACKEND_URL;
+    if (!/^https:\/\/script\.google\.com\//.test(url) || !window.fetch) {
+      if (window.console) console.info('[Safarnama] backend not connected yet — would save:', data);
+      return Promise.resolve(false);
+    }
+    data.page = location.pathname + location.search;
+    var body = new URLSearchParams();
+    Object.keys(data).forEach(function (k) { body.append(k, data[k] == null ? '' : data[k]); });
+    var req = fetch(url, { method: 'POST', mode: 'no-cors', keepalive: true, body: body })
+      .then(function () { return true; }, function () { return false; });
+    var timeout = new Promise(function (r) { setTimeout(function () { r(false); }, 4000); });
+    return Promise.race([req, timeout]);
   };
 })();

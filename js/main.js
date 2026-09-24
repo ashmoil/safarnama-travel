@@ -265,6 +265,7 @@
         return;
       }
       track('sign_up', { method: 'newsletter', form_location: form.dataset.location || 'footer' });
+      if (window.sendToBackend) window.sendToBackend({ type: 'newsletter', email: email, location: form.dataset.location || 'footer' });
       if (note) { note.textContent = 'You’re in! Watch your inbox for travel deals ✦'; note.classList.add('is-success'); }
       toast('Subscribed! Welcome to the Safarnama family.');
       input.value = '';
@@ -298,9 +299,15 @@
       var dest = destSel ? destSel.value : '';
       var pkg = pkgSel ? pkgSel.value : '';
       var travellers = ($('#trip-travellers', tripForm) || {}).value || '';
-      track('generate_lead', { form_name: 'plan_my_trip', destination: dest, package_name: pkg, travellers: travellers, currency: 'INR', value: 1 }, function () {
-        go('thank-you.html?dest=' + encodeURIComponent(dest));
+      var saved = window.sendToBackend ? window.sendToBackend({
+        type: 'lead', name: name, phone: $('#trip-phone', tripForm).value.trim(), email: email,
+        destination: dest, package: pkg, date: ($('#trip-date', tripForm) || {}).value || '',
+        travellers: travellers, message: ($('#trip-msg', tripForm) || {}).value || ''
+      }) : Promise.resolve(false);
+      var tracked = new Promise(function (r) {
+        track('generate_lead', { form_name: 'plan_my_trip', destination: dest, package_name: pkg, travellers: travellers, currency: 'INR', value: 1 }, r);
       });
+      Promise.all([saved, tracked]).then(function () { go('thank-you.html?dest=' + encodeURIComponent(dest)); });
     });
   }
 
