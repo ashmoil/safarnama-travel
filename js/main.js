@@ -29,7 +29,7 @@
   /* ---------- Image fallback: never show a broken image ---------- */
   function imgFailed(img) {
     img.style.visibility = 'hidden';
-    if (img.parentElement) img.parentElement.classList.add('img-fallback');
+    if (img.parentElement && !img.closest('.chat')) img.parentElement.classList.add('img-fallback');
   }
   $$('img').forEach(function (img) {
     if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) imgFailed(img);
@@ -634,38 +634,44 @@
     gsap.from(avatars, { scale: 0, duration: 0.9, stagger: 0.08, ease: 'back.out(2)', scrollTrigger: { trigger: '.orbit', start: 'top 80%' } });
   }
 
-  /* ---------- HERO: fly through the fog into the rainforest (Movade style) — laptop AND phone ---------- */
+  /* ---------- HERO: walk into the mist, the mist clears, travellers start chatting ---------- */
   mm.add('(min-width: 0px)', function () {
     var phone = window.innerWidth <= 760;
     var hero = $('.hero--zoom');
     if (!hero) return;
-    var img1 = $('.hero__media:not(.hero__media--2) img', hero);
+    var m1 = $('.hero__media:not(.hero__media--2)', hero);
+    var v1 = m1 ? $('video, img', m1) : null;
     var m2 = $('.hero__media--2', hero);
-    var img2 = m2 ? $('img', m2) : null;
+    var v2 = m2 ? $('video, img', m2) : null;
     var fog = $$('.hero__fog i', hero);
     var title = $('.hero__title', hero);
     var extras = [$('.pill', hero), $('.hero__sub', hero)];
     var search = $('.search-card', hero);
     var bottom = $('.hero__bottom', hero);
+    var chats = $$('.hero-chat .chat', hero);
+    var cta = $('.hero-chat .chat-cta', hero);
     var IR = function (o) { o.immediateRender = false; return o; };
+    var play = function (v, on) { if (!v || !v.play) return; try { if (on) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause(); } catch (e) {} };
     var inset = phone ? 'inset(8px 8px 8px 8px round 22px)' : 'inset(14px 14px 14px 14px round 30px)';
     gsap.set(hero, { clipPath: inset });
-    var tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: phone ? '+=130%' : '+=170%', pin: true, scrub: 1.2, anticipatePin: 1, refreshPriority: 3 } });
+    var tl = gsap.timeline({ scrollTrigger: {
+      trigger: hero, start: 'top top', end: phone ? '+=140%' : '+=180%', pin: true, scrub: 1, anticipatePin: 1, refreshPriority: 3,
+      onUpdate: function (self) { play(v2, self.progress > 0.12); play(v1, self.progress < 0.45); }
+    } });
     tl.fromTo([search, bottom], { y: 0, opacity: 1 }, IR({ y: 160, opacity: 0, ease: 'power2.in', duration: 0.25 }), 0)
       .fromTo(extras, { opacity: 1, y: 0 }, IR({ opacity: 0, y: -30, ease: 'none', duration: 0.2 }), 0.15)
-      // the misty mountain photo rushes towards the camera and dissolves
-      .fromTo(img1, { scale: 1, opacity: 1 }, IR({ scale: 2.6, ease: 'power1.in', duration: 0.6 }), 0)
-      .to(img1, { opacity: 0, ease: 'none', duration: 0.3 }, 0.3)
-      // clouds thicken, then part as we fly through them
+      // walk into the mist: the foggy bridge rushes towards the camera and dissolves
+      .fromTo(v1, { scale: 1 }, IR({ scale: 2.2, ease: 'power1.in', duration: 0.6 }), 0)
+      .fromTo(m1, { opacity: 1 }, IR({ opacity: 0, ease: 'none', duration: 0.3 }), 0.3)
       .fromTo(fog, { opacity: 0, scale: 1 }, IR({ opacity: 0.9, scale: 1.3, ease: 'none', duration: 0.25, stagger: 0.05 }), 0.08)
       .to(fog, { opacity: 0, scale: 3.2, ease: 'power1.in', duration: 0.35, stagger: 0.05 }, 0.38)
-      // the rainforest appears behind the fog and keeps pushing in
+      // the mist clears: travellers walking on the rainforest bridge
       .fromTo(m2, { opacity: 0 }, IR({ opacity: 1, ease: 'none', duration: 0.3 }), 0.2)
-      .fromTo(img2, { scale: 1.6 }, IR({ scale: 1, ease: 'power1.out', duration: 0.8 }), 0.2)
-      // heading holds, then drifts back and fades as the next section arrives
-      .fromTo(title, { scale: 1, opacity: 1 }, IR({ scale: 0.92, opacity: 0, ease: 'power1.in', duration: 0.3 }), 0.7)
+      .fromTo(v2, { scale: 1.5 }, IR({ scale: 1, ease: 'power1.out', duration: 0.85 }), 0.2)
+      // headline holds, then drifts back and fades as the next section arrives
+      .fromTo(title, { scale: 1, opacity: 1 }, IR({ scale: 0.92, opacity: 0, ease: 'power1.in', duration: 0.3 }), 0.72)
       .to({}, { duration: 0.05 });
-    return function () { gsap.set([hero, img1, m2, img2, title, search, bottom].concat(fog, extras), { clearProps: 'all' }); };
+    return function () { gsap.set([hero, m1, v1, m2, v2, title, search, bottom].concat(fog, extras).filter(Boolean), { clearProps: 'all' }); };
   });
 
   /* ---------- Blur-in for the destination cards ---------- */
