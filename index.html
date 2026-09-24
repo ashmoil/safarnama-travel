@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <link rel="stylesheet" href="css/style.css?v=12">
   <script>try{if(sessionStorage.getItem('safar_seen'))document.documentElement.classList.add('seen')}catch(e){}</script>
   <script src="js/analytics.js?v=7"></script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TravelAgency", "name": "Safarnama Travels", "url": "https://ashmoil.github.io/safarnama-travel/", "logo": "https://ashmoil.github.io/safarnama-travel/assets/favicon.svg", "image": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1600&q=75", "description": "Safarnama plans personalised, hassle-free holidays across India and abroad — mountains, beaches, heritage and international trips.", "priceRange": "₹₹", "address": {"@type": "PostalAddress", "addressLocality": "Phagwara", "addressRegion": "Punjab", "postalCode": "144411", "addressCountry": "IN"}, "areaServed": "IN"}</script>
@@ -66,8 +66,15 @@
 
   <main id="main">
     <section class="hero hero--zoom" aria-labelledby="hero-title">
-      <div class="hero__media"><img src="https://images.unsplash.com/photo-1699694927495-4b8da5df6ce5?auto=format&fit=crop&w=2200&q=75" alt="Misty rainforest with a waterfall in the distance" fetchpriority="high" width="2200" height="1467"></div>
-      <div class="hero__media hero__media--2" aria-hidden="true"><img src="https://images.unsplash.com/photo-1789758612870-35c6aa006542?auto=format&fit=crop&w=2200&q=75" alt="" width="2200" height="1467"></div>
+      <div class="hero__media"><video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/video/hero-fog.jpg" aria-label="Travellers walking into the mist on a rainforest suspension bridge"><source src="assets/video/hero-fog.mp4" type="video/mp4"></video></div>
+      <div class="hero__media hero__media--2" aria-hidden="true"><video class="hero__video" muted loop playsinline preload="metadata" poster="assets/video/hero-clear.jpg"><source src="assets/video/hero-clear.mp4" type="video/mp4"></video></div>
+      <div class="hero-chat" aria-hidden="true">
+        <div class="chat chat--l"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&q=75&h=96" alt="" width="36" height="36"><p><b>Simran</b>Yaar, weekend pe kahin chalein? 🌿</p></div>
+        <div class="chat chat--r"><p><b>Rohit</b>Kashmir? Manali? Ya ye jungle wala bridge? 😍</p><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=96&q=75&h=96" alt="" width="36" height="36"></div>
+        <div class="chat chat--l"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&q=75&h=96" alt="" width="36" height="36"><p><b>Simran</b>Budget thoda tight hai… 😅</p></div>
+        <div class="chat chat--r"><p><b>Rohit</b>Safarnama pe ₹7,999 se trips hain, sab included! ✈️</p><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=96&q=75&h=96" alt="" width="36" height="36"></div>
+        <a href="contact.html" class="btn chat-cta" data-cta="hero_chat_plan">Plan My Trip <span class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
+      </div>
       <div class="hero__fog" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="container hero__content">
         <span class="pill" data-hero-item><b>New</b> Travel more, worry less</span>
@@ -533,6 +540,6 @@
   <script src="js/vendor/gsap.min.js"></script>
   <script src="js/vendor/ScrollTrigger.min.js"></script>
   <script src="js/vendor/lenis.min.js"></script>
-  <script src="js/main.js?v=9"></script>
+  <script src="js/main.js?v=12"></script>
 </body>
 </html>
