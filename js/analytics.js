@@ -7,7 +7,7 @@
            every page on the site loads this one file.
    ========================================================= */
 
-var SAFARNAMA_GA_ID = 'G-XXXXXXXXXX';
+var SAFARNAMA_GA_ID = 'G-L7059TEKQL';
 
 (function () {
   var id = SAFARNAMA_GA_ID;
